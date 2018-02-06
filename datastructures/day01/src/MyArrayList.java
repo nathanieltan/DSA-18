@@ -14,7 +14,7 @@ public class MyArrayList {
         size = 0;
     }
 
-    // TODO: Runtime: O(N)
+    // TODO: Runtime: Average O(1)
     public void add(Cow c) {
         if (size==elems.length) {
             Cow[] replacementElems = new Cow[elems.length*2];
@@ -71,7 +71,7 @@ public class MyArrayList {
             elems = replacementElems;
         }
 
-        if (index >= size){
+        if (index > size){
             throw new IndexOutOfBoundsException("Index Out of Bounds");
         }
         int counter = size;
