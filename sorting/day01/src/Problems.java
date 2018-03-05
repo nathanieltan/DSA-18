@@ -42,7 +42,45 @@ public class Problems {
      */
     public static double[] runningMedian(int[] inputStream) {
         double[] runningMedian = new double[inputStream.length];
-        // TODO
+        if(inputStream.length > 0) {
+            PriorityQueue<Integer> lower = maxPQ();
+            PriorityQueue<Integer> higher = minPQ();
+
+            lower.add(inputStream[0]);
+            runningMedian[0] = inputStream[0];
+            for (int i = 1; i < inputStream.length; i++) {
+                if(inputStream[i] <= runningMedian[i-1]) {
+                    lower.add(inputStream[i]);
+
+                }
+                else {
+                    higher.add(inputStream[i]);
+                }
+
+                if(lower.size() > higher.size()){
+                    higher.add(lower.poll());
+                }
+                else if(higher.size() > lower.size()){
+                    lower.add(higher.poll());
+                }
+
+                if((i+1)%2 == 0){
+                    runningMedian[i] = (double)(lower.peek() + higher.peek())/2.0;
+                }
+                else{
+                    if(lower.size()>higher.size()) {
+                        runningMedian[i] = lower.peek();
+                    }
+                    else{
+                        runningMedian[i] = higher.peek();
+                    }
+                }
+            }
+//            for(int i = 0; i < runningMedian.length; i++){
+//                System.out.print(runningMedian[i]+" ");
+//            }
+//            System.out.println();
+        }
         return runningMedian;
     }
 

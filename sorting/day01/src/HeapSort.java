@@ -18,7 +18,55 @@ public class HeapSort extends SortAlgorithm {
     // Corrects the position of element indexed i by sinking it.
     // Use either recursion or a loop to then sink the child
     public void sink(int i) {
-        // TODO
+        int left = leftChild(i);
+        int right = rightChild(i);
+        int leftVal;
+        int rightVal;
+        int currVal;
+        boolean goOn = false;
+
+        if(i<this.size) {
+            if(left<this.size){
+                if(this.heap[left]>this.heap[i]) {
+                    goOn = true;
+                }
+            }
+            if(right<this.size) {
+                if (this.heap[right] > this.heap[i]) {
+                    goOn = true;
+                }
+            }
+        }
+
+        while(goOn){
+            if(this.heap[left]>this.heap[i]){
+                leftVal = this.heap[left];
+                currVal = this.heap[i];
+                this.heap[left] = currVal;
+                this.heap[i] = leftVal;
+                i = left;
+            }
+            else if(this.heap[right]>this.heap[i]){
+                rightVal = this.heap[right];
+                currVal = this.heap[i];
+                this.heap[right] = currVal;
+                this.heap[i] = rightVal;
+                i = right;
+            }
+
+            left = leftChild(i);
+            right = rightChild(i);
+
+            goOn = false;
+            if(i<this.size-1) {
+                if(left<this.size){
+                    if(this.heap[left]>this.heap[i]) goOn = true;
+                }
+                if(right<this.size){
+                    if(this.heap[right]>this.heap[i]) goOn = true;
+                }
+            }
+        }
     }
 
     // Given the array, build a heap by correcting every non-leaf's position, starting from the bottom, then
@@ -28,25 +76,28 @@ public class HeapSort extends SortAlgorithm {
         this.size = array.length;
 
         for (int i=this.size / 2 - 1; i>=0; i--) {
-            // TODO
+            sink(i);
         }
     }
 
     /**
-     * Best-case runtime:
-     * Worst-case runtime:
-     * Average-case runtime:
+     * Best-case runtime: O(Nlog(N))
+     * Worst-case runtime: O(Nlog(N))
+     * Average-case runtime: O(Nlog(N))
      *
-     * Space-complexity:
+     * Space-complexity: O(N)
      */
     @Override
     public int[] sort(int[] array) {
         heapify(array);
 
         for (int i=size-1; i>0; i--) {
-            // TODO
+            int[] newArray = new int[i+1];
+            System.arraycopy(array,0,newArray,0,i);
+            heapify(newArray);
+            array[i] = newArray[0];
         }
 
-        return heap;
+        return array;
     }
 }
