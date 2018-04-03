@@ -1,8 +1,10 @@
+import java.util.LinkedList;
 import java.util.List;
 
 public class BinarySearchTree<T extends Comparable<T>> {
     TreeNode<T> root;
     private int size;
+    private List<T> traversalList;
 
     public int size() {
         return size;
@@ -28,8 +30,17 @@ public class BinarySearchTree<T extends Comparable<T>> {
     }
 
     public List<T> inOrderTraversal() {
-        // TODO
-        return null;
+        traversalList = new LinkedList<>();
+        traverse(root);
+        return traversalList;
+    }
+
+    private void traverse(TreeNode<T> n){
+        if(n != null){
+            traverse(n.leftChild);
+            traversalList.add(n.key);
+            traverse(n.rightChild);
+        }
     }
 
     /**
@@ -67,7 +78,9 @@ public class BinarySearchTree<T extends Comparable<T>> {
         else {
             // Case 3: two children
             // TODO
-            replacement = null;
+            replacement = findPredecessor(n);
+            delete(replacement);
+            replacement.moveChildrenFrom(n);
         }
 
         // Put the replacement in its correct place, and set the parent.
@@ -95,14 +108,81 @@ public class BinarySearchTree<T extends Comparable<T>> {
         return null;
     }
 
+    private TreeNode<T> findMinNode(TreeNode<T> n){
+        TreeNode<T> currentNode = n;
+
+        while(currentNode.hasLeftChild()){
+            currentNode = currentNode.leftChild;
+        }
+        return currentNode;
+    }
+
+    private TreeNode<T> findMaxNode(TreeNode<T> n){
+        TreeNode<T> currentNode = n;
+
+        while(currentNode.hasRightChild()){
+            currentNode = currentNode.rightChild;
+        }
+
+        return currentNode;
+    }
+
     private TreeNode<T> findPredecessor(TreeNode<T> n) {
-        // TODO
-        return null;
+        if(root == null){
+            return null;
+        }
+        // if there is no predecessor
+        if(findMinNode(root)==n){
+            return null;
+        }
+
+        // if predecessor is descendant
+        if(n.hasLeftChild()){
+            return findMaxNode(n.leftChild);
+        }
+
+        // if predecessor is ancestor
+        if(n.parent.hasRightChild()) {
+            if (n.parent.rightChild == n) {
+                return n.parent;
+            }
+        }
+
+        TreeNode<T> current = root;
+        TreeNode<T> predecessor = null;
+
+        while(current != null){
+            if(n.key == current.key){
+                break;
+            }
+            if(n.key.compareTo(current.key) < 0){
+                current = current.leftChild;
+            }
+            else if(n.key.compareTo(current.key) > 0){
+                predecessor = current;
+                current = current.rightChild;
+            }
+        }
+
+        return predecessor;
     }
 
     private TreeNode<T> findSuccessor(TreeNode<T> n) {
-        // TODO
-        return null;
+        if(root == null){
+            return null;
+        }
+        if(n.hasRightChild()){
+            return findMinNode(n.rightChild);
+        }
+
+        // finds parent that is left child of its parent
+        TreeNode<T> parent = n.parent;
+        TreeNode<T> current = n;
+        while(parent!=null && current==parent.rightChild){
+            current = parent;
+            parent = parent.parent;
+        }
+        return parent;
     }
 
     /**

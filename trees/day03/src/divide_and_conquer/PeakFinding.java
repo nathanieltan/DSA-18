@@ -51,13 +51,72 @@ public class PeakFinding {
 
 
     public static int findOneDPeak(int[] nums) {
-        // TODO
-        return 0;
+
+        return findOneDPeakHelper(nums, 0, nums.length, nums.length);
     }
 
+    private static int findOneDPeakHelper(int[] nums, int lo, int hi, int n){
+        int mid = lo + (hi-lo)/2;
+
+        if(peakOneD(mid, nums) == 0){
+            return mid;
+        }
+
+        else if(peakOneD(mid,nums) == -1){
+            return findOneDPeakHelper(nums, lo, (mid-1), n);
+        }
+
+        else{
+            return findOneDPeakHelper(nums, (mid+1), hi, n);
+        }
+    }
+
+    private static int[] findTwoDPeakHelper(int[][] nums, int xlo, int ylo, int xhi, int yhi){
+        int xmid = xlo + (xhi-xlo)/2;
+        int ymid = ylo + (yhi-ylo)/2;
+
+        int maxY = maxYIndex(xmid,ylo,yhi,nums);
+        int maxX;
+
+        int peakX = peakX(xmid,maxY, nums);
+        int peakY;
+
+        if(xlo == xhi && ylo == yhi){
+            return new int[]{ylo,xlo};
+        }
+
+        if(peakX == 0){
+            return new int[]{maxY,xmid};
+        }
+        else if(peakX == -1){
+            maxX = maxXIndex(ymid,xlo,xmid,nums);
+            peakY = peakY(maxX,ymid,nums);
+            if(peakY == 0){
+                return new int[]{ymid,maxX};
+            }
+            else if(peakY == 1){
+                return findTwoDPeakHelper(nums, xlo, ymid+1, xmid,yhi);
+            }
+            else{
+                return findTwoDPeakHelper(nums, xlo, ylo, xmid, ymid);
+            }
+        }
+        else{
+            maxX = maxXIndex(ymid, xmid+1, xhi, nums);
+            peakY = peakY(maxX, ymid, nums);
+            if(peakY == 0){
+                return new int[]{ymid,maxX};
+            }
+            else if(peakY == 1){
+                return findTwoDPeakHelper(nums,xmid+1,ymid+1,xhi,yhi);
+            }
+            else{
+                return findTwoDPeakHelper(nums,xmid+1,ylo,xhi,ymid);
+            }
+        }
+    }
     public static int[] findTwoDPeak(int[][] nums) {
-        // TODO
-        return null;
+        return findTwoDPeakHelper(nums, 0, 0, nums.length, nums.length);
     }
 
 }

@@ -28,19 +28,27 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
 
     // make a left-leaning link lean to the right
     TreeNode<T> rotateRight(TreeNode<T> h) {
-        // TODO
-        return h;
+        TreeNode<T> m = h.leftChild;
+        TreeNode<T> beta = m.rightChild;
+        m.rightChild = h;
+        h.leftChild = beta;
+        return m;
     }
 
     // make a right-leaning link lean to the left
     TreeNode<T> rotateLeft(TreeNode<T> h) {
-        // TODO
-        return h;
+        TreeNode<T> m = h.rightChild;
+        TreeNode<T> beta = m.leftChild;
+        m.leftChild = h;
+        h.rightChild = beta;
+        return m;
     }
 
     // flip the colors of a TreeNode and its two children
     TreeNode<T> flipColors(TreeNode<T> h) {
-        // TODO
+        h.color = !h.color;
+        h.leftChild.color = !h.leftChild.color;
+        h.rightChild.color = !h.rightChild.color;
         return h;
     }
 
@@ -53,7 +61,23 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
      * return balanced node
      */
     private TreeNode<T> balance(TreeNode<T> h) {
-        // TODO
+        if(isRed(h.rightChild) && !isRed(h.leftChild)){
+            h = rotateLeft(h);
+            boolean temp = h.color;
+            h.color = h.leftChild.color;
+            h.leftChild.color = temp;
+        }
+        if(isRed(h.leftChild) && isRed(h.leftChild.leftChild)){
+            h = rotateRight(h);
+            boolean temp = h.color;
+            h.color = h.rightChild.color;
+            h.rightChild.color = temp;
+        }
+        if(isRed(h.leftChild) && isRed(h.rightChild)){
+            h.color = !h.color;
+            h.leftChild.color = BLACK;
+            h.rightChild.color = BLACK;
+        }
         return h;
     }
 
@@ -66,6 +90,7 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
     TreeNode<T> insert(TreeNode<T> h, T key) {
         h = super.insert(h, key);
         // TODO: use balance to correct for the three rotation cases
+        h = balance(h);
         return h;
     }
 
