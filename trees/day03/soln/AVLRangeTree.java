@@ -70,19 +70,39 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         return x;
     }
 
+    public void rangeIndexRecurs(int lo, int hi, RangeNode<Integer> n, List<Integer> result) {
+        if (n == null) return;
+        if (n.key >= lo)
+            rangeIndexRecurs(lo, hi, n.leftChild, result);
+        if (n.key >= lo && n.key <= hi)
+            result.add(n.key);
+        if (n.key <= hi)
+            rangeIndexRecurs(lo, hi, n.rightChild, result);
+    }
+
+
     // Return all keys that are between [lo, hi] (inclusive).
-    // TODO: runtime = O(?)
+    // L = num keys in [hi, lo]
+    // TODO: runtime = O(log(N) + L)
     public List<Integer> rangeIndex(int lo, int hi) {
         // TODO
         List<Integer> l = new LinkedList<>();
+        rangeIndexRecurs(lo, hi, root, l);
         return l;
     }
 
+    // return the number of nodes.key < k
+    private int rank(int k, RangeNode<Integer> n) {
+        if (n == null) return 0;
+        if (n.key >= k) return rank(k, n.leftChild);
+        return 1 + nodeSize(n.leftChild) + rank(k, n.rightChild);
+    }
+
     // return the number of keys between [lo, hi], inclusive
-    // TODO: runtime = O(?)
+    // TODO: runtime = O(logN))
     public int rangeCount(int lo, int hi) {
         // TODO
-        return 0;
+        return rank(hi + 1, root) - rank(lo, root);
     }
 
     /**
@@ -105,6 +125,8 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         y.rightChild = x;
         x.height = 1 + Math.max(height(x.leftChild), height(x.rightChild));
         y.height = 1 + Math.max(height(y.leftChild), height(y.rightChild));
+        x.size = nodeSize(x.leftChild) + nodeSize(x.rightChild) + 1;
+        y.size = nodeSize(y.leftChild) + nodeSize(y.rightChild) + 1;
         return y;
     }
 
@@ -117,6 +139,8 @@ public class AVLRangeTree extends BinarySearchTree<Integer> {
         y.leftChild = x;
         x.height = 1 + Math.max(height(x.leftChild), height(x.rightChild));
         y.height = 1 + Math.max(height(y.leftChild), height(y.rightChild));
+        x.size = nodeSize(x.leftChild) + nodeSize(x.rightChild) + 1;
+        y.size = nodeSize(y.leftChild) + nodeSize(y.rightChild) + 1;
         return y;
     }
 }
